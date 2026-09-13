@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Oportunidades BR-UY - Callback</title>
+  <style>
+    body{font-family:Arial,sans-serif;background:#f5f7fb;color:#17324d;margin:0;padding:40px}
+    .card{max-width:760px;margin:auto;background:#fff;border:1px solid #dfe7ef;border-radius:16px;padding:28px;box-shadow:0 8px 30px rgba(0,0,0,.06)}
+    h1{margin-top:0}.ok{color:#0a7f3f}.err{color:#b42318}
+    code{display:block;word-break:break-all;background:#f2f4f7;padding:12px;border-radius:8px;margin:12px 0}
+    button{padding:10px 16px;border:0;border-radius:8px;background:#0b4ea2;color:white;font-weight:700;cursor:pointer}
+    .muted{color:#667085;font-size:14px}
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h1>Oportunidades BR-UY</h1>
+    <div id="content">Procesando autorización...</div>
+  </div>
+<script>
+(function(){
+  const p=new URLSearchParams(location.search);
+  const code=p.get('code');
+  const state=p.get('state');
+  const error=p.get('error');
+  const errorDesc=p.get('error_description');
+  const box=document.getElementById('content');
+  if(error){
+    box.innerHTML='<h2 class="err">No se pudo completar la autorización</h2><p>'+escapeHtml(errorDesc||error)+'</p><p class="muted">Podés cerrar esta pestaña y volver a la aplicación de Windows.</p>';
+    return;
+  }
+  if(code){
+    const full=location.href;
+    box.innerHTML='<h2 class="ok">Autorización recibida</h2><p>Volvé a la aplicación de Windows y pegá la URL completa si te la solicita.</p><code id="url"></code><button id="copy">Copiar URL completa</button><p class="muted">Esta página no envía el código a ningún servidor.</p>';
+    document.getElementById('url').textContent=full;
+    document.getElementById('copy').onclick=async()=>{try{await navigator.clipboard.writeText(full);document.getElementById('copy').textContent='Copiado';}catch(e){}};
+    return;
+  }
+  box.innerHTML='<p>Esta página es el retorno seguro de autorización para la aplicación Windows <strong>Oportunidades BR-UY</strong>.</p><p class="muted">No hay ningún código de autorización en esta visita.</p>';
+  function escapeHtml(s){return String(s).replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]));}
+})();
+</script>
+</body>
+</html>
